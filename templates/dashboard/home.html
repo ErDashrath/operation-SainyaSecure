@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero bg-gradient-to-r from-primary to-secondary text-white py-16 rounded-lg mb-8">
+    <div class="hero-content text-center">
+        <div class="max-w-md">
+            <h1 class="mb-5 text-5xl font-bold">🛡️ MilComm</h1>
+            <p class="mb-5">Hybrid Secure Military Communication System</p>
+            <p class="text-sm opacity-80">Offline-First • P2P Messaging • Blockchain Verified</p>
+        </div>
+    </div>
+</div>
+
+<!-- Status Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- P2P Status -->
+    <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">📡 Connection Status</h2>
+            <div class="stat-value text-2xl" id="p2p-status">Loading...</div>
+            <div class="stat-desc">Connected Peers: <span id="peer-count">0</span></div>
+            <div class="card-actions justify-end">
+                <button class="btn btn-primary btn-sm" onclick="toggleP2P()">Switch Mode</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Count -->
+    <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">💬 Messages</h2>
+            <div class="stat-value text-2xl">{{ message_count }}</div>
+            <div class="stat-desc">Total Messages</div>
+            <div class="card-actions justify-end">
+                <a href="{% url 'messaging:message_list' %}" class="btn btn-secondary btn-sm">View All</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blockchain Status -->
+    <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">🔗 Blockchain</h2>
+            <div class="stat-value text-2xl">{{ blockchain_count }}</div>
+            <div class="stat-desc">Total Transactions</div>
+            <div class="card-actions justify-end">
+                <a href="{% url 'blockchain:transaction_list' %}" class="btn btn-accent btn-sm">Explore</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Devices -->
+    <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">📱 Devices</h2>
+            <div class="stat-value text-2xl">{{ device_count }}</div>
+            <div class="stat-desc">Registered Devices</div>
+            <div class="card-actions justify-end">
+                <button class="btn btn-info btn-sm">Manage</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Send Message -->
+    <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">🚀 Quick Send Message</h2>
+            <form id="quick-message-form" onsubmit="sendMessage(event)">
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">Select Device</span>
+                    </label>
+                    <select class="select select-bordered" name="device" required>
+                        <option disabled selected>Choose device</option>
+                        {% for device in devices %}
+                        <option value="{{ device.device_id }}">{{ device.device_id }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-control w-full mt-4">
+                    <label class="label">
+                        <span class="label-text">Message</span>
+                    </label>
+                    <textarea class="textarea textarea-bordered h-24" name="message" placeholder="Enter your message..." required></textarea>
+                </div>
+                <div class="card-actions justify-end mt-4">
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Recent Messages -->
+    <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">📥 Recent Messages</h2>
+            <div class="overflow-x-auto max-h-64">
+                <table class="table table-compact w-full">
+                    <tbody>
+                        {% for message in recent_messages %}
+                        <tr>
+                            <td>
+                                <div class="flex items-center space-x-3">
+                                    <div class="avatar">
+                                        <div class="mask mask-squircle w-8 h-8 bg-primary">
+                                            <span class="text-xs">📱</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm">{{ message.msg_id }}</div>
+                                        <div class="text-xs opacity-50">{{ message.timestamp|date:"H:i" }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-sm">{{ message.payload|truncatechars:30 }}</td>
+                            <td>
+                                {% if message.anomaly_flag %}
+                                <div class="badge badge-error">⚠️</div>
+                                {% else %}
+                                <div class="badge badge-success">✓</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-gray-500">No messages yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Logs -->
+<div class="card bg-base-200 shadow-xl">
+    <div class="card-body">
+        <h2 class="card-title">📋 System Activity</h2>
+        <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Event</th>
+                        <th>Details</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in recent_transactions %}
+                    <tr>
+                        <td class="text-sm">{{ tx.timestamp|date:"H:i:s" }}</td>
+                        <td>Blockchain TX</td>
+                        <td class="font-mono text-xs">{{ tx.tx_hash|slice:":16" }}...</td>
+                        <td>
+                            {% if tx.is_synced %}
+                            <div class="badge badge-success">Synced</div>
+                            {% else %}
+                            <div class="badge badge-warning">Pending</div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-gray-500">No activity yet</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleP2P() {
+    fetch('/p2p_sync/api/toggle/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        updateStatus();
+        alert(`Switched to ${data.offline_mode ? 'P2P Offline' : 'Server Online'} mode`);
+    })
+    .catch(console.error);
+}
+
+function sendMessage(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    
+    fetch('/messaging/api/send/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Message sent successfully!');
+            event.target.reset();
+            location.reload();
+        } else {
+            alert('Failed to send message');
+        }
+    })
+    .catch(console.error);
+}
+</script>
+
+{% csrf_token %}
+{% endblock %}

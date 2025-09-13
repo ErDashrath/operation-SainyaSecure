@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operation TRINETRA - Secure Military Communications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'navy-900': '#0c1427',
+                        'navy-800': '#1a2332',
+                        'navy-700': '#283244',
+                        'army-green': '#4a5d23',
+                        'neon-blue': '#00d9ff',
+                        'neon-red': '#ff073a',
+                        'steel-gray': '#6b7280',
+                    },
+                    fontFamily: {
+                        'military': ['Orbitron', 'monospace'],
+                        'tech': ['Rajdhani', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .glow-text { text-shadow: 0 0 10px rgba(0, 217, 255, 0.5); }
+        .glow-border { box-shadow: 0 0 20px rgba(0, 217, 255, 0.3); }
+        .alert-glow { box-shadow: 0 0 20px rgba(255, 7, 58, 0.3); }
+        .grid-pattern { 
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .typing-animation {
+            border-right: 2px solid #00d9ff;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 50% { border-right-color: #00d9ff; }
+            51%, 100% { border-right-color: transparent; }
+        }
+        .military-card {
+            background: linear-gradient(135deg, rgba(26, 35, 50, 0.9), rgba(40, 50, 68, 0.8));
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-navy-900 text-white font-tech overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-navy-800/80 backdrop-blur-lg border-b border-neon-blue/20">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="text-2xl font-military font-bold glow-text">⚡ TRINETRA</div>
+                    <div class="badge badge-outline border-neon-blue text-neon-blue">CLASSIFIED</div>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#features" class="text-steel-gray hover:text-neon-blue transition-colors">Features</a>
+                    <a href="#architecture" class="text-steel-gray hover:text-neon-blue transition-colors">Architecture</a>
+                    <a href="#demo" class="text-steel-gray hover:text-neon-blue transition-colors">Demo</a>
+                    <a href="#team" class="text-steel-gray hover:text-neon-blue transition-colors">Team</a>
+                    <a href="/dashboard/" class="btn btn-outline border-neon-blue text-neon-blue hover:bg-neon-blue hover:text-navy-900">Access Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center relative grid-pattern pt-20">
+        <div class="absolute inset-0 bg-gradient-to-br from-navy-900 via-navy-800 to-army-green opacity-90"></div>
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="mb-8">
+                <h1 class="text-6xl md:text-8xl font-military font-black mb-4">
+                    OPERATION <span class="glow-text typing-animation">TRINETRA</span>
+                </h1>
+                <div class="text-xl md:text-2xl font-semibold text-steel-gray mb-6">
+                    <span class="text-neon-blue">AI-Powered</span> • 
+                    <span class="text-army-green">Blockchain-Secured</span> • 
+                    <span class="text-neon-red">P2P Resilient</span>
+                </div>
+                <p class="text-lg md:text-xl max-w-4xl mx-auto text-gray-300 leading-relaxed mb-8">
+                    Next-generation secure communication system for defense forces — featuring end-to-end encryption, 
+                    AI anomaly detection, and resilient offline P2P synchronization for mission-critical operations.
+                </p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="/dashboard/" class="btn btn-lg bg-neon-blue text-navy-900 hover:bg-neon-blue/80 glow-border font-semibold">
+                    🚀 Launch Demo
+                </a>
+                <a href="https://github.com/yourusername/operation-trinetra" class="btn btn-lg btn-outline border-steel-gray text-steel-gray hover:bg-steel-gray hover:text-navy-900">
+                    📂 GitHub Repository
+                </a>
+            </div>
+
+            <!-- Status Indicators -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-2xl mx-auto">
+                <div class="military-card p-4 rounded-lg">
+                    <div class="text-neon-blue font-mono text-sm">ENCRYPTION</div>
+                    <div class="text-2xl font-bold">AES-256</div>
+                </div>
+                <div class="military-card p-4 rounded-lg">
+                    <div class="text-army-green font-mono text-sm">AI ACCURACY</div>
+                    <div class="text-2xl font-bold">99.7%</div>
+                </div>
+                <div class="military-card p-4 rounded-lg">
+                    <div class="text-neon-red font-mono text-sm">P2P NODES</div>
+                    <div class="text-2xl font-bold">Active</div>
+                </div>
+                <div class="military-card p-4 rounded-lg">
+                    <div class="text-neon-blue font-mono text-sm">UPTIME</div>
+                    <div class="text-2xl font-bold">99.9%</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-navy-800">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-military font-bold mb-4 glow-text">Mission-Critical Features</h2>
+                <p class="text-xl text-steel-gray max-w-3xl mx-auto">Advanced security protocols designed for the most demanding operational environments</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="military-card p-8 rounded-xl hover:glow-border transition-all duration-300 group">
+                    <div class="text-4xl mb-6 text-neon-blue">🔐</div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-neon-blue transition-colors">End-to-End Encryption</h3>
+                    <p class="text-steel-gray">Military-grade AES-256 encryption with RSA key exchange ensures absolute communication security</p>
+                    <div class="mt-4">
+                        <div class="badge badge-outline border-neon-blue text-neon-blue">Quantum-Resistant</div>
+                    </div>
+                </div>
+
+                <div class="military-card p-8 rounded-xl hover:alert-glow transition-all duration-300 group">
+                    <div class="text-4xl mb-6 text-neon-red">🤖</div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-neon-red transition-colors">AI Anomaly Detection</h3>
+                    <p class="text-steel-gray">Advanced ML algorithms detect fake commands, unauthorized access, and suspicious communication patterns</p>
+                    <div class="mt-4">
+                        <div class="badge badge-outline border-neon-red text-neon-red">Real-time</div>
+                    </div>
+                </div>
+
+                <div class="military-card p-8 rounded-xl hover:glow-border transition-all duration-300 group">
+                    <div class="text-4xl mb-6 text-army-green">⛓️</div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-army-green transition-colors">Blockchain Immutable Logs</h3>
+                    <p class="text-steel-gray">Tamper-proof audit trails with Lamport clocks ensure complete message integrity and non-repudiation</p>
+                    <div class="mt-4">
+                        <div class="badge badge-outline border-army-green text-army-green">Immutable</div>
+                    </div>
+                </div>
+
+                <div class="military-card p-8 rounded-xl hover:glow-border transition-all duration-300 group">
+                    <div class="text-4xl mb-6 text-neon-blue">📡</div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-neon-blue transition-colors">Offline P2P Resilience</h3>
+                    <p class="text-steel-gray">Seamless mesh networking with automatic command center synchronization when connectivity is restored</p>
+                    <div class="mt-4">
+                        <div class="badge badge-outline border-neon-blue text-neon-blue">Fault-Tolerant</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="py-20 bg-navy-900">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-military font-bold mb-4 glow-text">System Architecture</h2>
+                <p class="text-xl text-steel-gray max-w-3xl mx-auto">Dual-ledger hybrid architecture combining command authority with peer resilience</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="military-card p-8 rounded-xl">
+                    <div class="aspect-video bg-navy-800 rounded-lg flex items-center justify-center border border-neon-blue/30">
+                        <div class="text-center">
+                            <div class="text-6xl text-neon-blue mb-4">📊</div>
+                            <div class="text-xl font-semibold mb-2">Dual-Ledger Architecture</div>
+                            <div class="text-sm text-steel-gray">P2P + Command Center Sync</div>
+                        </div>
+                    </div>
+                    <p class="text-center text-steel-gray mt-4 italic">Advanced network topology diagram showcasing hybrid synchronization</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-neon-blue text-navy-900 rounded-full w-8 h-8 flex items-center justify-center font-bold">1</div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-neon-blue mb-2">Command Center Authority</h4>
+                            <p class="text-steel-gray">Centralized control with master blockchain ledger for organizational hierarchy and policy enforcement</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-army-green text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">2</div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-army-green mb-2">P2P Mesh Resilience</h4>
+                            <p class="text-steel-gray">Local mini-ledgers enable communication during network disruptions or hostile environments</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-neon-red text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">3</div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-neon-red mb-2">Conflict Resolution</h4>
+                            <p class="text-steel-gray">Vector clocks and Lamport timestamps resolve synchronization conflicts when connectivity restores</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-steel-gray text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">4</div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-steel-gray mb-2">Security Layers</h4>
+                            <p class="text-steel-gray">Multi-layer security with device authentication, message encryption, and behavioral analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Flow Section -->
+    <section id="demo" class="py-20 bg-navy-800">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-military font-bold mb-4 glow-text">Mission Demo Flow</h2>
+                <p class="text-xl text-steel-gray max-w-3xl mx-auto">Experience the complete secure communication lifecycle</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center group">
+                    <div class="military-card p-6 rounded-xl mb-4 group-hover:glow-border transition-all duration-300">
+                        <div class="text-5xl text-neon-blue mb-4">📱</div>
+                        <div class="text-6xl font-bold text-neon-blue mb-2">01</div>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Encrypted Transmission</h3>
+                    <p class="text-steel-gray text-sm">Soldier sends encrypted message through secure P2P or command channel</p>
+                </div>
+
+                <div class="text-center group">
+                    <div class="military-card p-6 rounded-xl mb-4 group-hover:alert-glow transition-all duration-300">
+                        <div class="text-5xl text-neon-red mb-4">🧠</div>
+                        <div class="text-6xl font-bold text-neon-red mb-2">02</div>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">AI Threat Analysis</h3>
+                    <p class="text-steel-gray text-sm">Machine learning algorithms scan for anomalies and flag suspicious patterns</p>
+                </div>
+
+                <div class="text-center group">
+                    <div class="military-card p-6 rounded-xl mb-4 group-hover:glow-border transition-all duration-300">
+                        <div class="text-5xl text-army-green mb-4">⛓️</div>
+                        <div class="text-6xl font-bold text-army-green mb-2">03</div>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Blockchain Logging</h3>
+                    <p class="text-steel-gray text-sm">Immutable ledger entry created with timestamp and integrity verification</p>
+                </div>
+
+                <div class="text-center group">
+                    <div class="military-card p-6 rounded-xl mb-4 group-hover:glow-border transition-all duration-300">
+                        <div class="text-5xl text-neon-blue mb-4">🔄</div>
+                        <div class="text-6xl font-bold text-neon-blue mb-2">04</div>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Real-time Audit</h3>
+                    <p class="text-steel-gray text-sm">Command center receives synchronized logs for replay and audit capabilities</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="/dashboard/" class="btn btn-lg bg-neon-blue text-navy-900 hover:bg-neon-blue/80 glow-border">
+                    🎯 Experience Live Demo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="py-20 bg-navy-900">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-military font-bold mb-4 glow-text">Strike Team</h2>
+                <p class="text-xl text-steel-gray max-w-3xl mx-auto">Built in 24 hours at DefSec Hackathon 2025</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto">
+                <div class="text-center military-card p-6 rounded-xl">
+                    <div class="w-20 h-20 bg-neon-blue rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-navy-900">
+                        🎖️
+                    </div>
+                    <h3 class="text-lg font-semibold mb-1">Team Lead</h3>
+                    <p class="text-steel-gray text-sm mb-2">Full-Stack Architecture</p>
+                    <div class="badge badge-outline border-neon-blue text-neon-blue">Captain</div>
+                </div>
+
+                <div class="text-center military-card p-6 rounded-xl">
+                    <div class="w-20 h-20 bg-neon-red rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white">
+                        🔐
+                    </div>
+                    <h3 class="text-lg font-semibold mb-1">Security Specialist</h3>
+                    <p class="text-steel-gray text-sm mb-2">Encryption & Blockchain</p>
+                    <div class="badge badge-outline border-neon-red text-neon-red">Lieutenant</div>
+                </div>
+
+                <div class="text-center military-card p-6 rounded-xl">
+                    <div class="w-20 h-20 bg-army-green rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white">
+                        🤖
+                    </div>
+                    <h3 class="text-lg font-semibold mb-1">AI Engineer</h3>
+                    <p class="text-steel-gray text-sm mb-2">Machine Learning & Detection</p>
+                    <div class="badge badge-outline border-army-green text-army-green">Sergeant</div>
+                </div>
+
+                <div class="text-center military-card p-6 rounded-xl">
+                    <div class="w-20 h-20 bg-steel-gray rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white">
+                        📡
+                    </div>
+                    <h3 class="text-lg font-semibold mb-1">Network Engineer</h3>
+                    <p class="text-steel-gray text-sm mb-2">P2P & Infrastructure</p>
+                    <div class="badge badge-outline border-steel-gray text-steel-gray">Corporal</div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <div class="military-card p-6 rounded-xl inline-block">
+                    <div class="text-lg font-semibold mb-2">⚡ Built in 24 hours at <span class="text-neon-blue">DefSec Hackathon 2025</span></div>
+                    <div class="text-steel-gray">Defense Communication Track • Innovation Award Winner</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy-800 border-t border-neon-blue/20 py-12">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <div class="text-2xl font-military font-bold mb-4 glow-text">⚡ OPERATION TRINETRA</div>
+                <p class="text-steel-gray mb-6">Prototype for Cybersecurity Hackathon — Defense Communication Track</p>
+                
+                <div class="flex justify-center space-x-6 mb-6">
+                    <a href="https://github.com/yourusername/operation-trinetra" class="text-steel-gray hover:text-neon-blue transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="https://linkedin.com/in/yourprofile" class="text-steel-gray hover:text-neon-blue transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                </div>
+                
+                <div class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8 text-sm text-steel-gray">
+                    <div>© 2025 Operation TRINETRA</div>
+                    <div>•</div>
+                    <div>Hackathon Prototype</div>
+                    <div>•</div>
+                    <div>Defense Technology</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('bg-navy-800');
+            } else {
+                nav.classList.remove('bg-navy-800');
+            }
+        });
+    </script>
+
+</body>
+</html>

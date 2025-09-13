@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Military Communication System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        secondary: '#7c3aed',
+                        accent: '#059669',
+                        neutral: '#1f2937',
+                        'base-100': '#111827',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-base-100 text-white">
+    <!-- Navigation -->
+    <div class="navbar bg-base-300 shadow-lg">
+        <div class="navbar-start">
+            <div class="dropdown">
+                <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"></path>
+                    </svg>
+                </div>
+                <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box w-52">
+                    <li><a href="{% url 'dashboard:home' %}">Dashboard</a></li>
+                    <li><a href="{% url 'messaging:message_list' %}">Messages</a></li>
+                    <li><a href="{% url 'blockchain:transaction_list' %}">Blockchain</a></li>
+                    <li><a href="{% url 'p2p_sync:status' %}">P2P Status</a></li>
+                </ul>
+            </div>
+            <a href="{% url 'dashboard:home' %}" class="btn btn-ghost text-xl">🛡️ MilComm</a>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1">
+                <li><a href="{% url 'dashboard:home' %}" class="btn btn-ghost">Dashboard</a></li>
+                <li><a href="{% url 'messaging:message_list' %}" class="btn btn-ghost">Messages</a></li>
+                <li><a href="{% url 'blockchain:transaction_list' %}" class="btn btn-ghost">Blockchain</a></li>
+                <li><a href="{% url 'p2p_sync:status' %}" class="btn btn-ghost">P2P Status</a></li>
+            </ul>
+        </div>
+        <div class="navbar-end">
+            <div class="badge badge-accent">SECURE</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer footer-center p-4 bg-base-300 text-base-content">
+        <div>
+            <p>🔐 Secure Military Communications • Offline-First • Blockchain Verified</p>
+            <p class="text-sm opacity-70">Django Backend • HTML Frontend • Real-time P2P</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for real-time updates -->
+    <script>
+        // Simple polling for real-time updates
+        function updateStatus() {
+            fetch('/p2p_sync/api/status/')
+                .then(response => response.json())
+                .then(data => {
+                    const statusEl = document.getElementById('p2p-status');
+                    if (statusEl) {
+                        statusEl.textContent = data.offline_mode ? 'P2P Offline' : 'Server Online';
+                        statusEl.className = data.offline_mode 
+                            ? 'badge badge-warning' 
+                            : 'badge badge-success';
+                    }
+                })
+                .catch(console.error);
+        }
+        
+        // Update every 5 seconds
+        setInterval(updateStatus, 5000);
+        
+        // Initial update
+        updateStatus();
+    </script>
+</body>
+</html>
