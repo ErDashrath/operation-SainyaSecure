@@ -1,0 +1,437 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- P2P Communication Status Page -->
+<div class="container mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="hero bg-gradient-to-r from-info to-primary text-white py-4 rounded-lg mb-6">
+        <div class="hero-content text-center">
+            <div class="max-w-lg">
+                <h1 class="mb-2 text-3xl font-bold">📡 P2P Communication Center</h1>
+                <p class="mb-1 text-sm">Peer-to-Peer Network Management</p>
+                <p class="text-xs opacity-80">Direct Device Communication • Offline-First • Mesh Network</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <!-- Connection Status -->
+        <div class="card bg-base-200 shadow-xl">
+            <div class="card-body p-4">
+                <h2 class="card-title text-lg">🔗 Connection Status</h2>
+                <div class="stat-value text-2xl font-bold" id="p2p-mode-status">Loading...</div>
+                <div class="stat-desc mb-2" id="p2p-mode-desc">Checking network status...</div>
+                <div class="card-actions justify-end">
+                    <button class="btn btn-primary btn-sm" onclick="toggleP2PMode()">Switch Mode</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Peer Count -->
+        <div class="card bg-base-200 shadow-xl">
+            <div class="card-body p-4">
+                <h2 class="card-title text-lg">👥 Connected Peers</h2>
+                <div class="stat-value text-2xl font-bold" id="peer-count-display">0</div>
+                <div class="stat-desc mb-2">Active peer connections</div>
+                <div class="card-actions justify-end">
+                    <button class="btn btn-secondary btn-sm" onclick="discoverPeers()">Discover</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sync Status -->
+        <div class="card bg-base-200 shadow-xl">
+            <div class="card-body p-4">
+                <h2 class="card-title text-lg">🔄 Sync Status</h2>
+                <div class="stat-value text-2xl font-bold" id="sync-status">0/0</div>
+                <div class="stat-desc mb-2">Blocks synced/pending</div>
+                <div class="card-actions justify-end">
+                    <button class="btn btn-accent btn-sm" onclick="syncWithPeers()">Sync Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- P2P Controls -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Peer Management -->
+        <div class="card bg-base-200 shadow-xl">
+            <div class="card-body p-4">
+                <h2 class="card-title text-xl mb-4">👥 Peer Management</h2>
+                
+                <!-- Peer List -->
+                <div class="overflow-x-auto">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Device</th>
+                                <th>Signal</th>
+                                <th>Distance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="peer-list-table">
+                            <tr>
+                                <td colspan="4" class="text-center text-gray-500">No peers discovered</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-4 flex space-x-2">
+                    <button class="btn btn-info btn-sm" onclick="discoverPeers()">🔍 Discover Peers</button>
+                    <button class="btn btn-warning btn-sm" onclick="refreshPeers()">🔄 Refresh</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- P2P Messaging -->
+        <div class="card bg-base-200 shadow-xl">
+            <div class="card-body p-4">
+                <h2 class="card-title text-xl mb-4">📨 P2P Messaging</h2>
+                
+                <form id="p2p-message-form" onsubmit="sendP2PMessage(event)">
+                    <div class="form-control w-full mb-3">
+                        <label class="label">
+                            <span class="label-text">From Device</span>
+                        </label>
+                        <select class="select select-bordered select-sm" name="sender_device" required>
+                            <option disabled selected>Choose sender device</option>
+                            {% for device in devices %}
+                            <option value="{{ device.device_id }}">{{ device.device_id }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-control w-full mb-3">
+                        <label class="label">
+                            <span class="label-text">To Peer</span>
+                        </label>
+                        <select class="select select-bordered select-sm" name="receiver_peer" id="peer-select" required>
+                            <option disabled selected>Choose peer device</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-control w-full mb-3">
+                        <label class="label">
+                            <span class="label-text">Message</span>
+                        </label>
+                        <textarea class="textarea textarea-bordered h-20" name="message" placeholder="Enter P2P message..." required></textarea>
+                    </div>
+                    
+                    <div class="card-actions justify-end">
+                        <button type="submit" class="btn btn-primary btn-sm">📡 Send P2P</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Network Activity -->
+    <div class="card bg-base-200 shadow-xl">
+        <div class="card-body p-4">
+            <h2 class="card-title text-xl mb-4">📊 P2P Network Activity</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Type</th>
+                            <th>From → To</th>
+                            <th>Block ID</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="p2p-activity-table">
+                        <tr>
+                            <td colspan="5" class="text-center text-gray-500">No P2P activity yet</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-4 flex justify-between items-center">
+                <div class="text-sm text-gray-500">
+                    Last updated: <span id="activity-last-update">--:--:--</span>
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="refreshActivity()">🔄 Refresh</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// P2P Status Page JavaScript
+let currentP2PMode = false; // false = server online, true = p2p offline
+
+function loadP2PStatus() {
+    fetch('/p2p_sync/api/status/')
+    .then(response => response.json())
+    .then(data => {
+        updateP2PDisplay(data);
+        currentP2PMode = data.offline_mode;
+    })
+    .catch(error => {
+        console.error('Failed to load P2P status:', error);
+        showP2PMessage('❌ Failed to load P2P status', 'error');
+    });
+}
+
+function updateP2PDisplay(data) {
+    // Update status
+    const statusEl = document.getElementById('p2p-mode-status');
+    const descEl = document.getElementById('p2p-mode-desc');
+    const peerCountEl = document.getElementById('peer-count-display');
+    const syncStatusEl = document.getElementById('sync-status');
+    
+    if (data.offline_mode) {
+        statusEl.textContent = 'P2P Offline Mode';
+        statusEl.className = 'stat-value text-2xl font-bold text-warning';
+        descEl.textContent = `Connected to ${data.connected_peers} peers`;
+    } else {
+        statusEl.textContent = 'Server Online Mode';
+        statusEl.className = 'stat-value text-2xl font-bold text-success';
+        descEl.textContent = 'Connected to central server';
+    }
+    
+    peerCountEl.textContent = data.connected_peers || 0;
+    
+    const totalBlocks = data.total_local_blocks || 0;
+    const pendingBlocks = data.local_blocks_pending_sync || 0;
+    const syncedBlocks = totalBlocks - pendingBlocks;
+    syncStatusEl.textContent = `${syncedBlocks}/${totalBlocks}`;
+    
+    // Update peer list
+    if (data.peer_list) {
+        updatePeerTable(data.peer_list);
+    }
+}
+
+function updatePeerTable(peers) {
+    const tbody = document.getElementById('peer-list-table');
+    const peerSelect = document.getElementById('peer-select');
+    
+    if (peers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-gray-500">No peers discovered</td></tr>';
+        peerSelect.innerHTML = '<option disabled selected>No peers available</option>';
+        return;
+    }
+    
+    // Update table
+    tbody.innerHTML = '';
+    peers.forEach(peer => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <div class="flex items-center space-x-2">
+                    <div class="avatar">
+                        <div class="mask mask-squircle w-6 h-6 bg-primary">
+                            <span class="text-xs">📱</span>
+                        </div>
+                    </div>
+                    <span class="font-semibold">${peer.name || peer.id}</span>
+                </div>
+            </td>
+            <td>
+                <div class="flex items-center space-x-1">
+                    <span class="text-sm">${peer.signal_strength || peer.signal || 75}%</span>
+                    <div class="badge ${(peer.signal_strength || peer.signal || 75) > 70 ? 'badge-success' : 'badge-warning'} badge-xs"></div>
+                </div>
+            </td>
+            <td class="text-sm">${peer.distance || '0.5km'}</td>
+            <td>
+                <div class="badge badge-success badge-sm">Online</div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    // Update select options
+    peerSelect.innerHTML = '<option disabled selected>Choose peer device</option>';
+    peers.forEach(peer => {
+        const option = document.createElement('option');
+        option.value = peer.id;
+        option.textContent = `${peer.name || peer.id} (${peer.signal_strength || peer.signal || 75}%)`;
+        peerSelect.appendChild(option);
+    });
+}
+
+function toggleP2PMode() {
+    const btn = event.target;
+    btn.textContent = '🔄 Switching...';
+    btn.disabled = true;
+    
+    fetch('/p2p_sync/api/toggle/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showP2PMessage(data.message, data.offline_mode ? 'warning' : 'success');
+            loadP2PStatus();
+            
+            if (data.offline_mode) {
+                setTimeout(discoverPeers, 1000);
+            }
+        } else {
+            showP2PMessage('❌ Failed to switch mode', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Toggle failed:', error);
+        showP2PMessage('❌ Mode switch failed', 'error');
+    })
+    .finally(() => {
+        btn.textContent = 'Switch Mode';
+        btn.disabled = false;
+    });
+}
+
+function discoverPeers() {
+    showP2PMessage('🔍 Discovering nearby peers...', 'info');
+    
+    fetch('/p2p_sync/api/discover/')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updatePeerTable(data.peers);
+            showP2PMessage(`✅ Discovered ${data.total_peers} peers`, 'success');
+            
+            // Update peer count
+            document.getElementById('peer-count-display').textContent = data.total_peers;
+        } else {
+            showP2PMessage('❌ Peer discovery failed', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Discovery failed:', error);
+        showP2PMessage('❌ Discovery failed', 'error');
+    });
+}
+
+function syncWithPeers() {
+    showP2PMessage('🔄 Synchronizing with peers...', 'info');
+    
+    fetch('/p2p_sync/api/sync/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showP2PMessage(data.message, 'success');
+            loadP2PStatus(); // Refresh status
+        } else {
+            showP2PMessage(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Sync failed:', error);
+        showP2PMessage('❌ Sync failed', 'error');
+    });
+}
+
+function sendP2PMessage(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const data = {
+        sender_device: formData.get('sender_device'),
+        receiver_peer: formData.get('receiver_peer'),
+        message: formData.get('message')
+    };
+    
+    if (!data.sender_device || !data.receiver_peer || !data.message) {
+        showP2PMessage('⚠️ Please fill in all fields', 'warning');
+        return;
+    }
+    
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    submitBtn.textContent = '📡 Sending...';
+    submitBtn.disabled = true;
+    
+    fetch('/p2p_sync/api/send-message/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            showP2PMessage(result.message, 'success');
+            event.target.reset();
+            refreshActivity();
+        } else {
+            showP2PMessage(`❌ ${result.error}`, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Send failed:', error);
+        showP2PMessage('❌ Failed to send message', 'error');
+    })
+    .finally(() => {
+        submitBtn.textContent = '📡 Send P2P';
+        submitBtn.disabled = false;
+    });
+}
+
+function refreshPeers() {
+    discoverPeers();
+}
+
+function refreshActivity() {
+    // Update activity timestamp
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        hour12: false
+    });
+    document.getElementById('activity-last-update').textContent = timeString;
+}
+
+function showP2PMessage(message, type) {
+    // Create toast notification
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} fixed top-4 right-4 w-96 z-50`;
+    toast.innerHTML = `
+        <div class="flex items-center justify-between">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="btn btn-ghost btn-xs">✕</button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 3000);
+}
+
+function getCsrfToken() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    return csrfToken ? csrfToken.value : '';
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadP2PStatus();
+    setInterval(loadP2PStatus, 10000); // Update every 10 seconds
+});
+</script>
+
+{% csrf_token %}
+{% endblock %}

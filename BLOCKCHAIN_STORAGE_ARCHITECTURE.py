@@ -1,5 +1,5 @@
 """
-OPERATION TRINETRA - Blockchain Storage Architecture
+OPERATION SainyaSecure - Blockchain Storage Architecture
 ==================================================
 
 This document explains where and how blockchain ledger records are stored

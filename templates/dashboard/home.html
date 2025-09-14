@@ -563,33 +563,60 @@ function updateStatus() {
         const peerCountElement = document.getElementById('peer-count');
         const connectionModeElement = document.getElementById('connection-mode');
         const lastUpdateElement = document.getElementById('last-update');
+        const latencyElement = document.getElementById('latency');
+        const uptimeElement = document.getElementById('uptime');
         
         if (data.offline_mode) {
-            statusElement.textContent = '🔴 P2P Offline';
-            statusElement.className = 'stat-value text-2xl text-error';
-            connectionModeElement.textContent = 'P2P Mesh Network';
+            statusElement.textContent = 'P2P Offline';
+            statusElement.className = 'stat-value text-3xl font-bold text-warning';
+            connectionModeElement.textContent = data.connected_peers > 0 ? `P2P (${data.connected_peers} peers)` : 'P2P Discovering...';
+            connectionModeElement.className = 'badge badge-sm badge-warning';
         } else {
-            statusElement.textContent = '🟢 Server Online';
-            statusElement.className = 'stat-value text-2xl text-success';
+            statusElement.textContent = 'Server Online';
+            statusElement.className = 'stat-value text-3xl font-bold text-success';
             connectionModeElement.textContent = 'Central Server';
+            connectionModeElement.className = 'badge badge-sm badge-success';
         }
         
-        peerCountElement.textContent = data.peer_count || 0;
+        // Update peer count
+        if (peerCountElement) {
+            peerCountElement.textContent = data.peer_count || 0;
+        }
+        
+        // Update latency and uptime
+        if (latencyElement) {
+            latencyElement.textContent = data.offline_mode ? '--ms' : '12ms';
+            latencyElement.className = data.offline_mode ? 'text-gray-400' : 'text-green-400';
+        }
+        
+        if (uptimeElement) {
+            uptimeElement.textContent = data.network_quality || '99.9%';
+            uptimeElement.className = data.offline_mode ? 'text-orange-400' : 'text-blue-400';
+        }
         
         // Update last update time
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('en-IN', {
-            timeZone: 'Asia/Kolkata',
-            hour12: false
-        });
         if (lastUpdateElement) {
-            lastUpdateElement.textContent = timeString;
+            lastUpdateElement.textContent = data.last_sync || new Date().toLocaleTimeString('en-IN', {
+                timeZone: 'Asia/Kolkata',
+                hour12: false
+            });
         }
+        
+        console.log('P2P status updated:', data);
     })
     .catch(error => {
         console.error('Status update failed:', error);
-        document.getElementById('p2p-status').textContent = '❓ Unknown';
-        document.getElementById('connection-mode').textContent = 'Error';
+        const statusElement = document.getElementById('p2p-status');
+        const connectionModeElement = document.getElementById('connection-mode');
+        
+        if (statusElement) {
+            statusElement.textContent = '❓ Unknown';
+            statusElement.className = 'stat-value text-3xl font-bold text-error';
+        }
+        if (connectionModeElement) {
+            connectionModeElement.textContent = 'Error';
+            connectionModeElement.className = 'badge badge-sm badge-error';
+        }
     });
 }
 
@@ -622,6 +649,14 @@ function updateDashboardStats() {
 }
 
 function toggleP2P() {
+    // Show loading state
+    const statusEl = document.getElementById('p2p-status');
+    const modeEl = document.getElementById('connection-mode');
+    const originalStatus = statusEl ? statusEl.textContent : '';
+    
+    if (statusEl) statusEl.textContent = '🔄 Switching...';
+    if (modeEl) modeEl.textContent = 'Switching...';
+    
     fetch('/p2p_sync/api/toggle/', {
         method: 'POST',
         headers: {
@@ -631,13 +666,131 @@ function toggleP2P() {
     })
     .then(response => response.json())
     .then(data => {
-        updateStatus();
-        alert(`Switched to ${data.offline_mode ? 'P2P Offline' : 'Server Online'} mode`);
+        if (data.success) {
+            // Update UI elements
+            if (statusEl) {
+                statusEl.textContent = data.offline_mode ? 'P2P Offline' : 'Server Online';
+                statusEl.className = data.offline_mode ? 'stat-value text-3xl font-bold text-warning' : 'stat-value text-3xl font-bold text-success';
+            }
+            
+            if (modeEl) {
+                modeEl.textContent = data.offline_mode ? 'P2P' : 'Server';
+                modeEl.className = data.offline_mode ? 'badge badge-sm badge-warning' : 'badge badge-sm badge-success';
+            }
+            
+            // Update peer count
+            const peerCountEl = document.getElementById('peer-count');
+            if (peerCountEl) {
+                peerCountEl.textContent = data.peer_count || 0;
+            }
+            
+            // Show success message
+            showP2PAlert(data.message, data.offline_mode ? 'warning' : 'success');
+            
+            // Refresh status and activity
+            updateStatus();
+            updateSystemActivity();
+            
+            // If switched to offline mode, discover peers
+            if (data.offline_mode) {
+                setTimeout(discoverPeers, 1000);
+            }
+        } else {
+            throw new Error(data.message || 'Toggle failed');
+        }
     })
     .catch(error => {
         console.error('Toggle failed:', error);
-        alert('Failed to toggle P2P mode');
+        
+        // Restore original status
+        if (statusEl) statusEl.textContent = originalStatus;
+        if (modeEl) modeEl.textContent = 'Error';
+        
+        showP2PAlert(`❌ Failed to toggle P2P mode: ${error.message}`, 'error');
     });
+}
+
+function discoverPeers() {
+    fetch('/p2p_sync/api/discover/')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updatePeerList(data.peers);
+            showP2PAlert(`🔍 Discovered ${data.total_peers} peers nearby`, 'info');
+        }
+    })
+    .catch(error => console.error('Peer discovery failed:', error));
+}
+
+function updatePeerList(peers) {
+    // Update peer count in the dashboard
+    const peerCountEl = document.getElementById('peer-count');
+    if (peerCountEl) {
+        peerCountEl.textContent = peers.length;
+    }
+    
+    // Update connection mode info
+    const modeEl = document.getElementById('connection-mode');
+    if (modeEl && peers.length > 0) {
+        modeEl.textContent = `P2P (${peers.length} peers)`;
+    }
+}
+
+function syncWithPeers() {
+    showP2PAlert('🔄 Synchronizing with peers...', 'info');
+    
+    fetch('/p2p_sync/api/sync/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showP2PAlert(data.message, 'success');
+            updateSystemActivity(); // Refresh activity log
+        } else {
+            showP2PAlert(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Sync failed:', error);
+        showP2PAlert('❌ Sync failed: Connection error', 'error');
+    });
+}
+
+function showP2PAlert(message, type) {
+    // Create or update alert element
+    let alertEl = document.getElementById('p2p-alert');
+    if (!alertEl) {
+        alertEl = document.createElement('div');
+        alertEl.id = 'p2p-alert';
+        alertEl.className = 'alert alert-info fixed top-4 right-4 w-96 z-50';
+        document.body.appendChild(alertEl);
+    }
+    
+    // Update alert style based on type
+    alertEl.className = `alert alert-${type} fixed top-4 right-4 w-96 z-50`;
+    alertEl.innerHTML = `
+        <div class="flex items-center space-x-2">
+            <span>${message}</span>
+            <button onclick="closeP2PAlert()" class="btn btn-ghost btn-xs">✕</button>
+        </div>
+    `;
+    
+    // Auto-hide after 3 seconds for non-error messages
+    if (type !== 'error') {
+        setTimeout(closeP2PAlert, 3000);
+    }
+}
+
+function closeP2PAlert() {
+    const alertEl = document.getElementById('p2p-alert');
+    if (alertEl) {
+        alertEl.remove();
+    }
 }
 
 function sendMessage(event) {

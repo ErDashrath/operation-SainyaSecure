@@ -1,5 +1,5 @@
 """
-OPERATION TRINETRA - Web3 Blockchain Integration
+OPERATION SainyaSecure - Web3 Blockchain Integration
 ==============================================
 
 CURRENT STATUS: DEMO MODE - Ready for production deployment

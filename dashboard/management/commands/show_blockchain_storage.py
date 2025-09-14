@@ -17,7 +17,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('🔗 OPERATION TRINETRA - BLOCKCHAIN STORAGE REPORT'))
+        self.stdout.write(self.style.SUCCESS('🔗 OPERATION SainyaSecure - BLOCKCHAIN STORAGE REPORT'))
         self.stdout.write('=' * 70)
 
         # Database location

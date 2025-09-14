@@ -11,7 +11,7 @@ import time
 BASE_URL = "http://127.0.0.1:8000"
 
 def test_enhanced_dashboard():
-    print("🎯 Testing Enhanced Operation TRINETRA Dashboard")
+    print("🎯 Testing Enhanced Operation SainyaSecure Dashboard")
     print("=" * 60)
     
     results = {

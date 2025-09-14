@@ -120,7 +120,7 @@ class SystemStatusView(APIView):
 			return Response({'error': str(e)})
 
 def landing_page(request):
-    """Landing page for Operation TRINETRA"""
+    """Landing page for Operation SainyaSecure"""
     return render(request, 'landing.html')
 
 class DashboardHomeView(TemplateView):

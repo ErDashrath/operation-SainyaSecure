@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-API Endpoint Testing Script for Operation TRINETRA
+API Endpoint Testing Script for Operation SainyaSecure
 ================================================
 
 This script tests all the API endpoints to ensure they're working properly
@@ -187,7 +187,7 @@ class APITester:
         print(f"  📈 {stats_working}/{len(endpoints)} statistics endpoints working")
 
 def main():
-    print("🛡️ Operation TRINETRA - API Endpoint Validator")
+    print("🛡️ Operation SainyaSecure - API Endpoint Validator")
     print("Testing all API endpoints for functionality and accessibility")
     
     tester = APITester()

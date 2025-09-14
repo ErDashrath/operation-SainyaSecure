@@ -331,7 +331,7 @@ def transaction_list_view(request):
         """)
         cc_row = cursor.fetchone()
         command_center = {
-            'name': cc_row[0] if cc_row else 'OPERATION_TRINETRA_CC',
+            'name': cc_row[0] if cc_row else 'OPERATION_SainyaSecure_CC',
             'current_mode': cc_row[1] if cc_row else 'NORMAL',
             'is_active': cc_row[2] if cc_row else True,
             'global_lamport_clock': cc_row[3] if cc_row else 0,

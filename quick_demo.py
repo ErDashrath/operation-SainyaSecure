@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-OPERATION TRINETRA - High-Level Demo Script
+OPERATION SainyaSecure - High-Level Demo Script
 ==========================================
 
 This script demonstrates the complete hybrid secure military communication system
@@ -58,7 +58,7 @@ class MilitaryCommDemo:
         
     def show_system_status(self):
         """Display current system status"""
-        self.print_header("OPERATION TRINETRA - SYSTEM STATUS")
+        self.print_header("OPERATION SainyaSecure - SYSTEM STATUS")
         
         # Command Center Status
         self.cursor.execute("SELECT name, current_mode, is_active, global_lamport_clock FROM blockchain_commandcenter")
@@ -204,7 +204,7 @@ class MilitaryCommDemo:
         
     def run_complete_demo(self):
         """Run the complete demonstration"""
-        print("🚀 Starting OPERATION TRINETRA Complete Demo...")
+        print("🚀 Starting OPERATION SainyaSecure Complete Demo...")
         time.sleep(1)
         
         self.show_system_status()
@@ -235,7 +235,7 @@ class MilitaryCommDemo:
     def interactive_menu(self):
         """Interactive demo menu"""
         while True:
-            self.print_header("OPERATION TRINETRA - INTERACTIVE DEMO")
+            self.print_header("OPERATION SainyaSecure - INTERACTIVE DEMO")
             print("1. 📊 Show System Status")
             print("2. 🏗️  Field Operation Scenario")
             print("3. 🔄 Mode Switching Demo")
