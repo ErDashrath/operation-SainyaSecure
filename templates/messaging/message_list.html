@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <div class="hero bg-gradient-to-r from-primary to-secondary text-white py-8 rounded-lg mb-6">
+        <div class="hero-content text-center">
+            <div class="max-w-md">
+                <h1 class="mb-5 text-4xl font-bold">💬 Message Center</h1>
+                <p class="mb-5">Secure Military Communication Hub</p>
+                <div class="stats stats-horizontal bg-base-200 text-base-content rounded-lg">
+                    <div class="stat">
+                        <div class="stat-title">Total Messages</div>
+                        <div class="stat-value" id="total-messages">{{ messages.count }}</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Anomalies</div>
+                        <div class="stat-value text-error" id="anomaly-count">{{ anomaly_count }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Filters -->
+    <div class="card bg-base-200 shadow-xl mb-6">
+        <div class="card-body">
+            <h2 class="card-title">🔍 Message Filters</h2>
+            <div class="flex flex-wrap gap-4">
+                <button class="btn btn-outline" onclick="filterMessages('all')">All Messages</button>
+                <button class="btn btn-outline btn-error" onclick="filterMessages('anomaly')">Anomalies</button>
+                <button class="btn btn-outline btn-success" onclick="filterMessages('secure')">Secure</button>
+                <button class="btn btn-outline btn-info" onclick="filterMessages('recent')">Last 24h</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages List -->
+    <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">📨 Message Traffic</h2>
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Timestamp</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messages-table">
+                        {% for message in messages %}
+                        <tr class="message-row {% if message.anomaly_flag %}anomaly{% endif %}">
+                            <td class="font-mono text-sm">{{ message.msg_id }}</td>
+                            <td class="text-sm">{{ message.timestamp|date:"Y-m-d H:i:s" }}</td>
+                            <td class="text-sm">
+                                <div class="badge badge-outline">{{ message.sender.device_id|truncatechars:10 }}</div>
+                            </td>
+                            <td class="text-sm">
+                                <div class="badge badge-outline">{{ message.receiver.device_id|truncatechars:10 }}</div>
+                            </td>
+                            <td class="max-w-xs truncate">{{ message.payload|truncatechars:50 }}</td>
+                            <td>
+                                {% if message.anomaly_flag %}
+                                    <div class="badge badge-error">⚠️ Anomaly</div>
+                                {% else %}
+                                    <div class="badge badge-success">✓ Secure</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-xs btn-info" onclick="viewMessage('{{ message.msg_id }}')">View</button>
+                                <button class="btn btn-xs btn-secondary" onclick="replyMessage('{{ message.msg_id }}')">Reply</button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-gray-500">No messages found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card bg-base-200 shadow-xl mt-6">
+        <div class="card-body">
+            <h2 class="card-title">⚡ Quick Actions</h2>
+            <div class="flex flex-wrap gap-4">
+                <button class="btn btn-primary" onclick="composeMessage()">📝 Compose Message</button>
+                <button class="btn btn-secondary" onclick="refreshMessages()">🔄 Refresh</button>
+                <button class="btn btn-accent" onclick="exportMessages()">📊 Export Data</button>
+                <a href="{% url 'dashboard:home' %}" class="btn btn-outline">← Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterMessages(type) {
+    const rows = document.querySelectorAll('.message-row');
+    rows.forEach(row => {
+        switch(type) {
+            case 'all':
+                row.style.display = '';
+                break;
+            case 'anomaly':
+                row.style.display = row.classList.contains('anomaly') ? '' : 'none';
+                break;
+            case 'secure':
+                row.style.display = !row.classList.contains('anomaly') ? '' : 'none';
+                break;
+            case 'recent':
+                // Show messages from last 24h (simplified)
+                const timestamp = row.querySelector('td:nth-child(2)').textContent;
+                const messageDate = new Date(timestamp);
+                const yesterday = new Date(Date.now() - 24*60*60*1000);
+                row.style.display = messageDate > yesterday ? '' : 'none';
+                break;
+        }
+    });
+}
+
+function viewMessage(msgId) {
+    alert(`Viewing message: ${msgId}\n\nIn a full implementation, this would open a detailed message view.`);
+}
+
+function replyMessage(msgId) {
+    const reply = prompt(`Reply to message ${msgId}:`);
+    if (reply) {
+        alert(`Reply sent: ${reply}`);
+    }
+}
+
+function composeMessage() {
+    window.location.href = '{% url "dashboard:home" %}#quick-message-form';
+}
+
+function refreshMessages() {
+    location.reload();
+}
+
+function exportMessages() {
+    alert('Export functionality would be implemented here.');
+}
+
+// Auto-refresh every 30 seconds
+setInterval(refreshMessages, 30000);
+</script>
+{% endblock %}

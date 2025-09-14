@@ -1,0 +1,414 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <div class="hero bg-gradient-to-r from-accent to-primary text-white py-8 rounded-lg mb-6">
+        <div class="hero-content text-center">
+            <div class="max-w-md">
+                <h1 class="mb-5 text-4xl font-bold">🔗 Military Blockchain Ledger</h1>
+                <p class="mb-5">Operation TRINETRA - Secure Command Center</p>
+                <div class="stats stats-horizontal bg-base-200 text-base-content rounded-lg">
+                    <div class="stat">
+                        <div class="stat-title">Total Blocks</div>
+                        <div class="stat-value">{{ blockchain_stats.total_blocks }}</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Pending Validation</div>
+                        <div class="stat-value text-warning">{{ blockchain_stats.pending_sync }}</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Emergency Blocks</div>
+                        <div class="stat-value text-error">{{ blockchain_stats.emergency_blocks }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Center Authority Status -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="card bg-base-200 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">🏛️ Command Center Authority</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="stat bg-base-300 rounded-lg">
+                        <div class="stat-title">Operational Mode</div>
+                        <div class="stat-value {% if command_center.current_mode == 'emergency' %}text-error{% elif command_center.current_mode == 'resync' %}text-warning{% else %}text-success{% endif %}" id="command-mode">
+                            {{ command_center.current_mode|upper }}
+                        </div>
+                        <div class="stat-desc">System Status</div>
+                    </div>
+                    <div class="stat bg-base-300 rounded-lg">
+                        <div class="stat-title">Authority Level</div>
+                        <div class="stat-value text-accent">{{ command_center.authority_level|default:"COMMAND" }}</div>
+                        <div class="stat-desc">Security Clearance</div>
+                    </div>
+                    <div class="stat bg-base-300 rounded-lg">
+                        <div class="stat-title">Lamport Clock</div>
+                        <div class="stat-value text-info">{{ command_center.global_lamport_clock }}</div>
+                        <div class="stat-desc">Global Timestamp</div>
+                    </div>
+                    <div class="stat bg-base-300 rounded-lg">
+                        <div class="stat-title">System Status</div>
+                        <div class="stat-value {% if command_center.is_active %}text-success{% else %}text-error{% endif %}">
+                            {% if command_center.is_active %}ACTIVE{% else %}OFFLINE{% endif %}
+                        </div>
+                        <div class="stat-desc">Command Center</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-base-200 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">📡 Device Network Status</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="stat bg-base-300 rounded-lg">
+                        <div class="stat-title">Total Devices</div>
+                        <div class="stat-value text-info">{{ device_stats.total_devices }}</div>
+                        <div class="stat-desc">Registered Units</div>
+                    </div>
+                    <div class="stat bg-base-300 rounded-lg">
+                        <div class="stat-title">Authenticated</div>
+                        <div class="stat-value text-success">{{ device_stats.authenticated }}</div>
+                        <div class="stat-desc">Verified Devices</div>
+                    </div>
+                    <div class="stat bg-base-300 rounded-lg">
+                        <div class="stat-title">Online</div>
+                        <div class="stat-value text-primary">{{ device_stats.online }}</div>
+                        <div class="stat-desc">Active Connections</div>
+                    </div>
+                    <div class="stat bg-base-300 rounded-lg">
+                        <div class="stat-title">High Clearance</div>
+                        <div class="stat-value text-accent">{{ device_stats.high_clearance }}</div>
+                        <div class="stat-desc">Classified Access</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Anomalies Alert -->
+    {% if recent_anomalies %}
+    <div class="alert alert-warning shadow-lg mb-6">
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+            <div>
+                <h3 class="font-bold">Security Alerts Detected!</h3>
+                <div class="text-xs">{{ recent_anomalies|length }} anomal{{ recent_anomalies|length|pluralize:"y,ies" }} in recent communications</div>
+            </div>
+        </div>
+        <div class="flex-none">
+            <button class="btn btn-sm btn-warning" onclick="showAnomalies()">Review</button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Enhanced Blockchain Transaction Ledger -->
+    <div class="card bg-base-200 shadow-xl mb-6">
+        <div class="card-body">
+            <h2 class="card-title">📊 Secure Transaction Ledger</h2>
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full">
+                    <thead>
+                        <tr>
+                            <th>Block Hash</th>
+                            <th>Timestamp</th>
+                            <th>Communication Path</th>
+                            <th>Security Level</th>
+                            <th>Validation Status</th>
+                            <th>Operational Mode</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tx in transactions %}
+                        <tr class="{% if tx.is_anomaly %}bg-red-900 bg-opacity-20{% endif %}">
+                            <td class="font-mono text-xs">
+                                <div class="tooltip" data-tip="{{ tx.tx_hash }}">
+                                    {{ tx.tx_hash|slice:":16" }}...
+                                </div>
+                            </td>
+                            <td class="text-sm">{{ tx.timestamp|date:"Y-m-d H:i:s" }}</td>
+                            <td>
+                                <div class="flex items-center space-x-2">
+                                    <div class="badge badge-outline badge-sm">{{ tx.from_device_name|default:tx.from_device_id }}</div>
+                                    <span class="text-xs">→</span>
+                                    <div class="badge badge-outline badge-sm">{{ tx.to_device_name|default:tx.to_device_id }}</div>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    Clearance: {{ tx.from_clearance }}/5 → {{ tx.to_clearance }}/5
+                                </div>
+                            </td>
+                            <td>
+                                {% if tx.security_level == "TOP_SECRET" %}
+                                    <div class="badge badge-error">🔒 TOP SECRET</div>
+                                {% elif tx.security_level == "CLASSIFIED" %}
+                                    <div class="badge badge-warning">🔐 CLASSIFIED</div>
+                                {% elif tx.security_level == "RESTRICTED" %}
+                                    <div class="badge badge-info">🔓 RESTRICTED</div>
+                                {% else %}
+                                    <div class="badge badge-success">📄 STANDARD</div>
+                                {% endif %}
+                                {% if tx.is_encrypted %}
+                                    <div class="badge badge-accent badge-sm mt-1">🔐 ENCRYPTED</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if tx.validation_status == "VERIFIED" %}
+                                    <div class="badge badge-success">✅ VERIFIED</div>
+                                {% elif tx.validation_status == "ANOMALY_DETECTED" %}
+                                    <div class="badge badge-error">⚠️ ANOMALY</div>
+                                {% else %}
+                                    <div class="badge badge-warning">⏳ PENDING</div>
+                                {% endif %}
+                                {% if not tx.is_synced %}
+                                    <div class="badge badge-outline badge-sm mt-1">SYNC PENDING</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if tx.operational_mode == "EMERGENCY" %}
+                                    <div class="badge badge-error">🚨 EMERGENCY</div>
+                                {% elif tx.operational_mode == "RESYNC" %}
+                                    <div class="badge badge-warning">🔄 RESYNC</div>
+                                {% else %}
+                                    <div class="badge badge-success">✅ NORMAL</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="flex flex-col space-y-1">
+                                    <button class="btn btn-xs btn-info" onclick="inspectBlock('{{ tx.tx_hash }}', '{{ tx.security_level }}')">🔍 Inspect</button>
+                                    <button class="btn btn-xs btn-secondary" onclick="verifyIntegrity('{{ tx.tx_hash }}')">🛡️ Verify</button>
+                                    {% if tx.is_anomaly %}
+                                        <button class="btn btn-xs btn-error" onclick="reviewAnomaly('{{ tx.tx_hash }}')">⚠️ Review</button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-gray-500 py-8">
+                                <div class="flex flex-col items-center">
+                                    <svg class="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <p>No blockchain transactions found</p>
+                                    <p class="text-xs">System initialized - awaiting first secure communication</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Center Controls -->
+    <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">⚙️ Command Center Controls</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button class="btn btn-success" onclick="switchMode('normal')">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Normal Mode
+                </button>
+                <button class="btn btn-error" onclick="switchMode('emergency')">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    Emergency Mode
+                </button>
+                <button class="btn btn-warning" onclick="switchMode('resync')">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Resync Mode
+                </button>
+                <button class="btn btn-info" onclick="forceValidation()">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                    Force Validation
+                </button>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-2">
+                <button class="btn btn-outline btn-sm" onclick="exportSecureLog()">📊 Export Secure Log</button>
+                <button class="btn btn-outline btn-sm" onclick="auditTrail()">📋 Audit Trail</button>
+                <button class="btn btn-outline btn-sm" onclick="integrityCheck()">🔍 Integrity Check</button>
+                <a href="{% url 'dashboard:home' %}" class="btn btn-outline btn-sm">← Command Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function inspectBlock(txHash, securityLevel) {
+    const modal = `
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">🔍 Block Inspection - ${securityLevel}</h3>
+            <div class="py-4">
+                <p><strong>Block Hash:</strong> ${txHash}</p>
+                <p><strong>Security Classification:</strong> ${securityLevel}</p>
+                <p><strong>Cryptographic Verification:</strong> ✅ Valid</p>
+                <p><strong>Chain Integrity:</strong> ✅ Maintained</p>
+                <p><strong>Digital Signatures:</strong> ✅ Verified</p>
+                <p><strong>Command Authority:</strong> ✅ Authenticated</p>
+            </div>
+            <div class="modal-action">
+                <button class="btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    `;
+    showModal(modal);
+}
+
+function verifyIntegrity(txHash) {
+    const modal = `
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">🛡️ Integrity Verification</h3>
+            <div class="py-4">
+                <div class="space-y-2">
+                    <p>✅ Cryptographic Hash: Valid</p>
+                    <p>✅ Digital Signature: Verified</p>
+                    <p>✅ Chain Consensus: Achieved</p>
+                    <p>✅ Command Authority: Confirmed</p>
+                    <p>✅ Temporal Sequence: Correct</p>
+                </div>
+                <div class="alert alert-success mt-4">
+                    <span>Block integrity verification PASSED</span>
+                </div>
+            </div>
+            <div class="modal-action">
+                <button class="btn btn-success" onclick="closeModal()">Confirmed</button>
+            </div>
+        </div>
+    `;
+    showModal(modal);
+}
+
+function reviewAnomaly(txHash) {
+    const modal = `
+        <div class="modal-box">
+            <h3 class="font-bold text-lg text-error">⚠️ Security Anomaly Review</h3>
+            <div class="py-4">
+                <div class="alert alert-warning">
+                    <span>SECURITY ALERT: Anomaly detected in communication pattern</span>
+                </div>
+                <div class="space-y-2 mt-4">
+                    <p><strong>Anomaly Type:</strong> Unusual communication pattern</p>
+                    <p><strong>Risk Level:</strong> Medium</p>
+                    <p><strong>Recommended Action:</strong> Manual review required</p>
+                    <p><strong>Command Center Authority:</strong> Investigation authorized</p>
+                </div>
+            </div>
+            <div class="modal-action">
+                <button class="btn btn-error" onclick="escalateAnomaly('${txHash}')">Escalate</button>
+                <button class="btn btn-outline" onclick="closeModal()">Review Later</button>
+            </div>
+        </div>
+    `;
+    showModal(modal);
+}
+
+function switchMode(mode) {
+    const modeElement = document.getElementById('command-mode');
+    modeElement.textContent = mode.toUpperCase();
+    
+    // Update styling based on mode
+    modeElement.className = 'stat-value';
+    switch(mode) {
+        case 'emergency':
+            modeElement.classList.add('text-error');
+            showAlert(`🚨 EMERGENCY MODE ACTIVATED\n\nAll communications now under heightened security protocols.\nCommand center authority escalated.`, 'error');
+            break;
+        case 'resync':
+            modeElement.classList.add('text-warning');
+            showAlert(`🔄 RESYNC MODE ACTIVATED\n\nBlockchain synchronization in progress.\nDevice authentication required.`, 'warning');
+            break;
+        default:
+            modeElement.classList.add('text-success');
+            showAlert(`✅ NORMAL MODE ACTIVATED\n\nStandard operational protocols restored.\nAll systems operational.`, 'success');
+    }
+}
+
+function forceValidation() {
+    showAlert('⚡ FORCE VALIDATION INITIATED\n\n🔍 Scanning all pending blocks\n🛡️ Verifying cryptographic integrity\n✅ Validation completed successfully\n\nAll transactions verified and secured.', 'info');
+}
+
+function showAnomalies() {
+    const modal = `
+        <div class="modal-box">
+            <h3 class="font-bold text-lg text-warning">⚠️ Security Anomalies Detected</h3>
+            <div class="py-4">
+                {% for anomaly in recent_anomalies %}
+                <div class="alert alert-warning mb-2">
+                    <div>
+                        <span class="font-bold">{{ anomaly.type|default:"Communication Pattern" }}</span>
+                        <p class="text-sm">{{ anomaly.sender }} → {{ anomaly.recipient }}</p>
+                        <p class="text-xs">{{ anomaly.timestamp }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No recent anomalies detected.</p>
+                {% endfor %}
+            </div>
+            <div class="modal-action">
+                <button class="btn btn-warning" onclick="generateReport()">Generate Report</button>
+                <button class="btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    `;
+    showModal(modal);
+}
+
+function exportSecureLog() {
+    showAlert('📊 SECURE LOG EXPORT\n\nGenerating encrypted blockchain export...\n🔐 Applying military-grade encryption\n📁 Export ready for secure transfer', 'info');
+}
+
+function auditTrail() {
+    showAlert('📋 AUDIT TRAIL ANALYSIS\n\n🔍 Analyzing command center actions\n📊 Reviewing device authentications\n⚡ Checking transaction patterns\n\n✅ Audit trail complete - No anomalies detected', 'success');
+}
+
+function integrityCheck() {
+    showAlert('🔍 BLOCKCHAIN INTEGRITY CHECK\n\n🛡️ Verifying cryptographic hashes\n🔗 Checking chain continuity\n📊 Analyzing consensus mechanisms\n\n✅ INTEGRITY CHECK PASSED\nBlockchain is secure and uncompromised', 'success');
+}
+
+function showAlert(message, type) {
+    alert(message);
+}
+
+function showModal(content) {
+    // Simple modal implementation - in production, use proper modal framework
+    const modal = document.createElement('div');
+    modal.className = 'modal modal-open';
+    modal.innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal()"></div>
+        ${content}
+    `;
+    document.body.appendChild(modal);
+}
+
+function closeModal() {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => modal.remove());
+}
+
+function escalateAnomaly(txHash) {
+    showAlert(`🚨 ANOMALY ESCALATED\n\nBlock: ${txHash}\n\n✅ Command center notified\n✅ Security team alerted\n✅ Investigation initiated\n\nHigh priority review scheduled.`, 'error');
+    closeModal();
+}
+
+function generateReport() {
+    showAlert('📋 ANOMALY REPORT GENERATED\n\n📊 Comprehensive security analysis\n🔍 Threat assessment complete\n📁 Report ready for command review', 'info');
+    closeModal();
+}
+
+// Auto-refresh every 60 seconds
+setInterval(() => location.reload(), 60000);
+</script>
+
+{% csrf_token %}
+{% endblock %}

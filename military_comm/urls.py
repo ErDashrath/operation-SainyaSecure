@@ -19,19 +19,28 @@ from django.urls import path, include
 from graphene_django.views import GraphQLView
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
-    path('', include('dashboard.urls')),  # Main dashboard homepage
-    path('users/', include('users.urls')),
-    path('messaging/', include('messaging.urls')),
-    path('p2p_sync/', include('p2p_sync.urls')),
-    path('blockchain/', include('blockchain.urls')),
-    path('ai_anomaly/', include('ai_anomaly.urls')),
-    path('dashboard/', include('dashboard.urls')),
-    path('api/users/', include('users.urls')),
-    path('api/messaging/', include('messaging.urls')),
-    path('api/p2p_sync/', include('p2p_sync.urls')),
-    path('api/blockchain/', include('blockchain.urls')),
-    path('api/ai_anomaly/', include('ai_anomaly.urls')),
-    path('api/dashboard/', include('dashboard.urls')),
+    
+    # Main dashboard homepage
+    path('', include('dashboard.urls')),
+    
+    # Web UI endpoints
+    path('dashboard/', include(('dashboard.urls', 'dashboard'), namespace='dashboard_web')),
+    path('users/', include(('users.urls', 'users'), namespace='users_web')),
+    path('messaging/', include(('messaging.urls', 'messaging'), namespace='messaging_web')),
+    path('p2p_sync/', include(('p2p_sync.urls', 'p2p_sync'), namespace='p2p_web')),
+    path('blockchain/', include(('blockchain.urls', 'blockchain'), namespace='blockchain_web')),
+    path('ai_anomaly/', include(('ai_anomaly.urls', 'ai_anomaly'), namespace='ai_web')),
+    
+    # API endpoints
+    path('api/v1/users/', include(('users.urls', 'users'), namespace='users_api')),
+    path('api/v1/messaging/', include(('messaging.urls', 'messaging'), namespace='messaging_api')),
+    path('api/v1/p2p-sync/', include(('p2p_sync.urls', 'p2p_sync'), namespace='p2p_api')),
+    path('api/v1/blockchain/', include(('blockchain.urls', 'blockchain'), namespace='blockchain_api')),
+    path('api/v1/ai-anomaly/', include(('ai_anomaly.urls', 'ai_anomaly'), namespace='ai_api')),
+    path('api/v1/dashboard/', include(('dashboard.urls', 'dashboard'), namespace='dashboard_api')),
+    
+    # GraphQL
     path('graphql/', GraphQLView.as_view(graphiql=True)),
 ]

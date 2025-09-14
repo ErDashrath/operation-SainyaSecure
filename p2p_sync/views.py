@@ -97,15 +97,17 @@ def p2p_status_api(request):
         data = {
             'offline_mode': status.get('offline_mode', False),
             'connected_peers': len(status.get('peer_list', [])),
+            'peer_count': len(status.get('peer_list', [])),  # Add for dashboard compatibility
             'peer_list': status.get('peer_list', []),
             'local_blocks_pending_sync': LocalLedgerBlock.objects.filter(is_synced=False).count()
         }
     except:
         # Fallback data for demo
         data = {
-            'offline_mode': False,
-            'connected_peers': 2,
-            'peer_list': ['peer_001', 'peer_002'],
+            'offline_mode': True,  # Show offline by default for demo
+            'connected_peers': 0,
+            'peer_count': 0,  # Add for dashboard compatibility
+            'peer_list': [],
             'local_blocks_pending_sync': 0
         }
     return JsonResponse(data)

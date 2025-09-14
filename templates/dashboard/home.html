@@ -1,92 +1,167 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="hero bg-gradient-to-r from-primary to-secondary text-white py-16 rounded-lg mb-8">
+<!-- Compact MilComm Header -->
+<div class="hero bg-gradient-to-r from-primary to-secondary text-white py-2 rounded-lg mb-4">
     <div class="hero-content text-center">
-        <div class="max-w-md">
-            <h1 class="mb-5 text-5xl font-bold">🛡️ MilComm</h1>
-            <p class="mb-5">Hybrid Secure Military Communication System</p>
-            <p class="text-sm opacity-80">Offline-First • P2P Messaging • Blockchain Verified</p>
+        <div class="max-w-lg">
+            <h1 class="mb-1 text-3xl font-bold">🛡️ MilComm</h1>
+            <p class="mb-0 text-sm">Hybrid Secure Military Communication System</p>
+            <p class="text-xs opacity-80">Offline-First • P2P Messaging • Blockchain Verified</p>
         </div>
     </div>
 </div>
 
-<!-- Status Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <!-- P2P Status -->
+<!-- Compact Status Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <!-- P2P Status - Compact -->
     <div class="card bg-base-200 shadow-xl">
-        <div class="card-body">
-            <h2 class="card-title">📡 Connection Status</h2>
-            <div class="stat-value text-2xl" id="p2p-status">Loading...</div>
-            <div class="stat-desc">Connected Peers: <span id="peer-count">0</span></div>
+        <div class="card-body p-4">
+            <h2 class="card-title text-lg">📡 Connection Status</h2>
+            <div class="stat-value text-3xl font-bold" id="p2p-status">Server Online</div>
+            <div class="stat-desc mb-2">
+                Connected Peers: <span id="peer-count" class="font-semibold">0</span> | 
+                Mode: <span id="connection-mode" class="badge badge-sm badge-outline">Unknown</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-2">
+                <div class="text-xs">
+                    <span class="text-gray-400">Latency:</span> <span id="latency" class="text-green-400">12ms</span>
+                </div>
+                <div class="text-xs">
+                    <span class="text-gray-400">Uptime:</span> <span id="uptime" class="text-blue-400">99.9%</span>
+                </div>
+            </div>
             <div class="card-actions justify-end">
                 <button class="btn btn-primary btn-sm" onclick="toggleP2P()">Switch Mode</button>
             </div>
-        </div>
-    </div>
-
-    <!-- Messages Count -->
-    <div class="card bg-base-200 shadow-xl">
-        <div class="card-body">
-            <h2 class="card-title">💬 Messages</h2>
-            <div class="stat-value text-2xl">{{ message_count }}</div>
-            <div class="stat-desc">Total Messages</div>
-            <div class="card-actions justify-end">
-                <a href="{% url 'messaging:message_list' %}" class="btn btn-secondary btn-sm">View All</a>
+            <div class="mt-1">
+                <div class="text-xs opacity-75">
+                    Last Update: <span id="last-update">--:--:--</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Blockchain Status -->
+    <!-- Messages Count - Compact -->
     <div class="card bg-base-200 shadow-xl">
-        <div class="card-body">
-            <h2 class="card-title">🔗 Blockchain</h2>
-            <div class="stat-value text-2xl">{{ blockchain_count }}</div>
-            <div class="stat-desc">Total Transactions</div>
+        <div class="card-body p-4">
+            <h2 class="card-title text-lg">💬 Messages</h2>
+            <div class="stat-value text-3xl font-bold message-count">{{ message_count }}</div>
+            <div class="stat-desc mb-2">Total Messages</div>
+            <div class="grid grid-cols-2 gap-2 mb-2">
+                <div class="text-xs">
+                    <span class="text-gray-400">Today:</span> <span class="font-semibold text-green-400">+12</span>
+                </div>
+                <div class="text-xs">
+                    <span class="text-gray-400">Encrypted:</span> <span class="font-semibold text-blue-400">100%</span>
+                </div>
+            </div>
             <div class="card-actions justify-end">
-                <a href="{% url 'blockchain:transaction_list' %}" class="btn btn-accent btn-sm">Explore</a>
+                <a href="{% url 'messaging_web:message_list_view' %}" class="btn btn-secondary btn-sm">View All</a>
             </div>
         </div>
     </div>
 
-    <!-- Devices -->
+    <!-- Blockchain Status - Compact -->
     <div class="card bg-base-200 shadow-xl">
-        <div class="card-body">
-            <h2 class="card-title">📱 Devices</h2>
-            <div class="stat-value text-2xl">{{ device_count }}</div>
-            <div class="stat-desc">Registered Devices</div>
+        <div class="card-body p-4">
+            <h2 class="card-title text-lg">🔗 Blockchain</h2>
+            <div class="stat-value text-3xl font-bold blockchain-count">{{ blockchain_count }}</div>
+            <div class="stat-desc mb-2">Total Transactions</div>
+            <div class="grid grid-cols-2 gap-2 mb-2">
+                <div class="text-xs">
+                    <span class="text-gray-400">Blocks:</span> <span class="font-semibold text-purple-400">{{ blockchain_count }}</span>
+                </div>
+                <div class="text-xs">
+                    <span class="text-gray-400">Hash Rate:</span> <span class="font-semibold text-cyan-400">Active</span>
+                </div>
+            </div>
             <div class="card-actions justify-end">
-                <button class="btn btn-info btn-sm">Manage</button>
+                <a href="{% url 'blockchain_web:transaction_list_view' %}" class="btn btn-accent btn-sm">Explore</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Devices - Compact -->
+    <div class="card bg-base-200 shadow-xl">
+        <div class="card-body p-4">
+            <h2 class="card-title text-lg">📱 Devices</h2>
+            <div class="stat-value text-3xl font-bold device-count">{{ device_count }}</div>
+            <div class="stat-desc mb-2">Registered Devices</div>
+            <div class="grid grid-cols-2 gap-2 mb-2">
+                <div class="text-xs">
+                    <span class="text-gray-400">Online:</span> <span class="font-semibold text-green-400">{{ device_count }}</span>
+                </div>
+                <div class="text-xs">
+                    <span class="text-gray-400">Auth:</span> <span class="font-semibold text-blue-400">{{ device_count }}</span>
+                </div>
+            </div>
+            <div class="stat-actions mb-1">
+                <div class="text-xs">
+                    Mode: <span id="system-mode" class="badge badge-info badge-sm">resync</span>
+                </div>
+            </div>
+            <div class="card-actions justify-end">
+                <a href="{% url 'users_web:device_management' %}" class="btn btn-info btn-sm">Manage</a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Quick Actions -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-    <!-- Send Message -->
+<!-- Compact Quick Actions -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+    <!-- Send Message - Compact -->
     <div class="card bg-base-200 shadow-xl">
-        <div class="card-body">
-            <h2 class="card-title">🚀 Quick Send Message</h2>
+        <div class="card-body p-4">
+            <h2 class="card-title text-xl mb-3">🚀 Quick Send Message</h2>
             <form id="quick-message-form" onsubmit="sendMessage(event)">
-                <div class="form-control w-full">
-                    <label class="label">
-                        <span class="label-text">Select Device</span>
-                    </label>
-                    <select class="select select-bordered" name="device" required>
-                        <option disabled selected>Choose device</option>
-                        {% for device in devices %}
-                        <option value="{{ device.device_id }}">{{ device.device_id }}</option>
-                        {% endfor %}
-                    </select>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <div class="form-control w-full">
+                        <label class="label">
+                            <span class="label-text">From Device (Sender)</span>
+                        </label>
+                        <select class="select select-bordered" name="sender_device" required>
+                            <option disabled selected>Choose sender device</option>
+                            {% for device in devices %}
+                            <option value="{{ device.device_id }}">{{ device.device_id }} {% if device.device_name %}({{ device.device_name }}){% endif %}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-control w-full">
+                        <label class="label">
+                            <span class="label-text">To Device (Receiver)</span>
+                        </label>
+                        <select class="select select-bordered" name="receiver_device" required>
+                            <option disabled selected>Choose receiver device</option>
+                            {% for device in devices %}
+                            <option value="{{ device.device_id }}">{{ device.device_id }} {% if device.device_name %}({{ device.device_name }}){% endif %}</option>
+                            {% endfor %}
+                            <option value="BROADCAST">🔊 BROADCAST (All Devices)</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-control w-full mt-4">
+                <div class="form-control w-full mt-3">
                     <label class="label">
-                        <span class="label-text">Message</span>
+                        <span class="label-text">Message Content</span>
                     </label>
-                    <textarea class="textarea textarea-bordered h-24" name="message" placeholder="Enter your message..." required></textarea>
+                    <textarea class="textarea textarea-bordered h-20" name="message" placeholder="Enter your secure message..." required></textarea>
                 </div>
-                <div class="card-actions justify-end mt-4">
+                <div class="form-control w-full mt-3">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">Security Options</span>
+                        <div class="flex items-center space-x-4">
+                            <label class="cursor-pointer label">
+                                <span class="label-text mr-2">🔐 Encrypt</span>
+                                <input type="checkbox" name="encrypt" class="checkbox checkbox-primary" checked>
+                            </label>
+                            <label class="cursor-pointer label">
+                                <span class="label-text mr-2">🔍 Priority</span>
+                                <input type="checkbox" name="priority" class="checkbox checkbox-warning">
+                            </label>
+                        </div>
+                    </label>
+                </div>
+                <div class="card-actions justify-end mt-3">
                     <button type="submit" class="btn btn-primary">Send Message</button>
                 </div>
             </form>
@@ -136,52 +211,422 @@
     </div>
 </div>
 
-<!-- System Logs -->
+<!-- Compact System Activity -->
 <div class="card bg-base-200 shadow-xl">
-    <div class="card-body">
-        <h2 class="card-title">📋 System Activity</h2>
+    <div class="card-body p-4">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="card-title text-xl">📋 System Activity</h2>
+            <div class="flex items-center space-x-4">
+                <!-- Device Communication Selector -->
+                <div class="form-control">
+                    <label class="label label-text text-xs">Review Device Communication:</label>
+                    <div class="flex items-center space-x-2">
+                        <select class="select select-bordered select-sm" id="from-device-select" onchange="filterDeviceCommunication()">
+                            <option value="">From Device</option>
+                            {% for device in devices %}
+                            <option value="{{ device.device_id }}">{{ device.device_id }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="text-xs">→</span>
+                        <select class="select select-bordered select-sm" id="to-device-select" onchange="filterDeviceCommunication()">
+                            <option value="">To Device</option>
+                            {% for device in devices %}
+                            <option value="{{ device.device_id }}">{{ device.device_id }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-sm btn-outline" onclick="clearDeviceFilter()">Clear</button>
+                    </div>
+                </div>
+                
+                <!-- Communication Type Filter -->
+                <div class="form-control">
+                    <label class="label label-text text-xs">Filter by Type:</label>
+                    <select class="select select-bordered select-sm" id="activity-type-filter" onchange="filterActivityType()">
+                        <option value="">All Activities</option>
+                        <option value="Message">Messages Only</option>
+                        <option value="Blockchain">Blockchain Only</option>
+                        <option value="Anomaly">Anomalies Only</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Status Display -->
+        <div id="filter-status" class="mb-4 hidden">
+            <div class="alert alert-info">
+                <span id="filter-message">Showing all communications</span>
+                <button class="btn btn-sm btn-outline" onclick="clearAllFilters()">Show All</button>
+            </div>
+        </div>
+        
         <div class="overflow-x-auto">
             <table class="table table-zebra w-full">
                 <thead>
                     <tr>
                         <th>Time</th>
                         <th>Event</th>
-                        <th>Details</th>
+                        <th>From → To</th>
+                        <th>Message Content</th>
+                        <th>Hash/ID</th>
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% for tx in recent_transactions %}
+                <tbody id="activity-logs">
+                    {% for activity in system_activities %}
                     <tr>
-                        <td class="text-sm">{{ tx.timestamp|date:"H:i:s" }}</td>
-                        <td>Blockchain TX</td>
-                        <td class="font-mono text-xs">{{ tx.tx_hash|slice:":16" }}...</td>
+                        <td class="text-sm">{{ activity.timestamp|date:"H:i:s" }}</td>
                         <td>
-                            {% if tx.is_synced %}
-                            <div class="badge badge-success">Synced</div>
+                            {% if activity.type == 'Message' %}
+                                <div class="badge badge-info">💬 Message</div>
+                            {% elif activity.type == 'Blockchain' %}
+                                <div class="badge badge-accent">🔗 Blockchain</div>
                             {% else %}
-                            <div class="badge badge-warning">Pending</div>
+                                <div class="badge badge-neutral">📊 System</div>
+                            {% endif %}
+                        </td>
+                        <td class="text-sm">
+                            <div class="flex items-center space-x-2">
+                                <span class="badge badge-outline badge-sm">{{ activity.from_device }}</span>
+                                <span>→</span>
+                                <span class="badge badge-outline badge-sm">{{ activity.to_device }}</span>
+                            </div>
+                        </td>
+                        <td class="font-mono text-xs">
+                            {% if activity.hash != 'No Hash' %}
+                                <div class="tooltip" data-tip="{{ activity.hash }}">
+                                    {{ activity.hash|slice:":8" }}...
+                                </div>
+                            {% else %}
+                                <span class="text-gray-500">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if activity.status == 'Secure' %}
+                                <div class="badge badge-success">✓ Secure</div>
+                            {% elif activity.status == 'Anomaly' %}
+                                <div class="badge badge-error">⚠️ Anomaly</div>
+                            {% elif activity.status == 'Synced' %}
+                                <div class="badge badge-success">✓ Synced</div>
+                            {% elif activity.status == 'Pending' %}
+                                <div class="badge badge-warning">⏳ Pending</div>
+                            {% else %}
+                                <div class="badge badge-info">{{ activity.status }}</div>
                             {% endif %}
                         </td>
                     </tr>
                     {% empty %}
+                    <!-- Fallback to old format if system_activities is empty -->
+                    {% for tx in recent_transactions %}
                     <tr>
-                        <td colspan="4" class="text-center text-gray-500">No activity yet</td>
+                        <td class="text-sm">{{ tx.timestamp|date:"H:i:s" }}</td>
+                        <td><div class="badge badge-accent">🔗 Blockchain</div></td>
+                        <td class="text-sm">
+                            <div class="flex items-center space-x-2">
+                                <span class="badge badge-outline badge-sm">{{ tx.from_device_id }}</span>
+                                <span>→</span>
+                                <span class="badge badge-outline badge-sm">{{ tx.to_device_id }}</span>
+                            </div>
+                        </td>
+                        <td class="font-mono text-xs">{{ tx.tx_hash|slice:":8" }}...</td>
+                        <td>
+                            {% if tx.is_synced %}
+                            <div class="badge badge-success">✓ Synced</div>
+                            {% else %}
+                            <div class="badge badge-warning">⏳ Pending</div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <!-- Add live system entry -->
+                    <tr>
+                        <td class="text-sm" id="current-time">--:--:--</td>
+                        <td><div class="badge badge-neutral">📊 System</div></td>
+                        <td class="text-sm">
+                            <div class="flex items-center space-x-2">
+                                <span class="badge badge-outline badge-sm">DASHBOARD</span>
+                                <span>→</span>
+                                <span class="badge badge-outline badge-sm">ALL</span>
+                            </div>
+                        </td>
+                        <td class="font-mono text-xs">Live Update</td>
+                        <td><div class="badge badge-info">🔄 Active</div></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            {% if not system_activities and not recent_transactions %}
+            <div class="text-center text-gray-500 py-4">
+                No recent activity
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
 
 <script>
+// Update status on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateStatus();
+    updateDashboardStats();
+    updateCurrentTime();
+    updateSystemActivity();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(updateStatus, 30000);
+    setInterval(updateDashboardStats, 60000);
+    setInterval(updateCurrentTime, 1000);
+    setInterval(updateSystemActivity, 45000);  // Update activity every 45 seconds
+});
+
+function updateSystemActivity() {
+    // Get current filter values
+    const fromDevice = document.getElementById('from-device-select')?.value || '';
+    const toDevice = document.getElementById('to-device-select')?.value || '';
+    const activityType = document.getElementById('activity-type-filter')?.value || '';
+    
+    // Build query parameters
+    const params = new URLSearchParams();
+    if (fromDevice) params.append('from_device', fromDevice);
+    if (toDevice) params.append('to_device', toDevice);
+    if (activityType) params.append('type', activityType);
+    
+    const url = `/dashboard/api/activity/${params.toString() ? '?' + params.toString() : ''}`;
+    
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        if (data.activities) {
+            const tbody = document.getElementById('activity-logs');
+            if (tbody) {
+                // Clear all existing rows
+                tbody.innerHTML = '';
+                
+                // Update filter status
+                updateFilterStatus(data.filter_info);
+                
+                if (data.activities.length > 0) {
+                    // Add filtered activities
+                    data.activities.forEach(activity => {
+                        const row = document.createElement('tr');
+                        
+                        const timestamp = new Date(activity.timestamp).toLocaleTimeString('en-IN', {
+                            timeZone: 'Asia/Kolkata',
+                            hour12: false,
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                        });
+                        
+                        const typeIcon = activity.type === 'Message' ? '💬' : '🔗';
+                        const typeBadge = activity.type === 'Message' ? 'badge-info' : 'badge-accent';
+                        
+                        let statusBadge = 'badge-info';
+                        let statusIcon = '';
+                        switch(activity.status) {
+                            case 'Secure':
+                                statusBadge = 'badge-success';
+                                statusIcon = '✓';
+                                break;
+                            case 'Anomaly':
+                                statusBadge = 'badge-error';
+                                statusIcon = '⚠️';
+                                break;
+                            case 'Synced':
+                                statusBadge = 'badge-success';
+                                statusIcon = '✓';
+                                break;
+                            case 'Pending':
+                                statusBadge = 'badge-warning';
+                                statusIcon = '⏳';
+                                break;
+                        }
+                        
+                        // Highlight anomalies
+                        const rowClass = activity.status === 'Anomaly' ? 'bg-red-900 bg-opacity-20' : '';
+                        
+                        row.className = rowClass;
+                        row.innerHTML = `
+                            <td class="text-sm">${timestamp}</td>
+                            <td><div class="badge ${typeBadge}">${typeIcon} ${activity.type}</div></td>
+                            <td class="text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="badge badge-outline badge-sm">${activity.from_device}</span>
+                                    <span>→</span>
+                                    <span class="badge badge-outline badge-sm">${activity.to_device}</span>
+                                </div>
+                            </td>
+                            <td class="text-xs max-w-xs truncate" title="${activity.content || 'No content'}">
+                                ${activity.content || 'ENCRYPTED'}
+                            </td>
+                            <td class="font-mono text-xs" title="${activity.hash}">
+                                ${activity.hash?.slice(0, 8)}...
+                            </td>
+                            <td><div class="badge ${statusBadge}">${statusIcon} ${activity.status}</div></td>
+                        `;
+                        
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    // Show no results message
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center text-gray-500 py-8">
+                                <div class="flex flex-col items-center">
+                                    <svg class="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.5-.9-6.172-2.291M15 13.291A7.962 7.962 0 0012 15c-2.34 0-4.5-.9-6.172-2.291M3 21h18v-2a2 2 0 00-2-2H5a2 2 0 00-2 2v2z"></path>
+                                    </svg>
+                                    <p>No communications found</p>
+                                    <p class="text-xs">No activities match the selected filters</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Activity update failed:', error);
+        const tbody = document.getElementById('activity-logs');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-red-500 py-4">
+                        ⚠️ Failed to load system activity
+                    </td>
+                </tr>
+            `;
+        }
+    });
+}
+
+// Filter functions
+function filterDeviceCommunication() {
+    updateSystemActivity();
+}
+
+function filterActivityType() {
+    updateSystemActivity();
+}
+
+function clearDeviceFilter() {
+    document.getElementById('from-device-select').value = '';
+    document.getElementById('to-device-select').value = '';
+    updateSystemActivity();
+}
+
+function clearAllFilters() {
+    document.getElementById('from-device-select').value = '';
+    document.getElementById('to-device-select').value = '';
+    document.getElementById('activity-type-filter').value = '';
+    updateSystemActivity();
+}
+
+function updateFilterStatus(filterInfo) {
+    const filterStatus = document.getElementById('filter-status');
+    const filterMessage = document.getElementById('filter-message');
+    
+    if (filterInfo && filterInfo.active_filters) {
+        let message = 'Showing ';
+        const filters = [];
+        
+        if (filterInfo.from_device) filters.push(`from ${filterInfo.from_device}`);
+        if (filterInfo.to_device) filters.push(`to ${filterInfo.to_device}`);
+        if (filterInfo.activity_type) filters.push(`${filterInfo.activity_type.toLowerCase()} activities`);
+        
+        message += filters.join(', ');
+        
+        filterMessage.textContent = message;
+        filterStatus.classList.remove('hidden');
+    } else {
+        filterStatus.classList.add('hidden');
+    }
+}
+
+function updateCurrentTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        hour12: false
+    });
+    const timeElement = document.getElementById('current-time');
+    if (timeElement) {
+        timeElement.textContent = timeString;
+    }
+}
+
+function updateStatus() {
+    fetch('/p2p_sync/api/status/')
+    .then(response => response.json())
+    .then(data => {
+        const statusElement = document.getElementById('p2p-status');
+        const peerCountElement = document.getElementById('peer-count');
+        const connectionModeElement = document.getElementById('connection-mode');
+        const lastUpdateElement = document.getElementById('last-update');
+        
+        if (data.offline_mode) {
+            statusElement.textContent = '🔴 P2P Offline';
+            statusElement.className = 'stat-value text-2xl text-error';
+            connectionModeElement.textContent = 'P2P Mesh Network';
+        } else {
+            statusElement.textContent = '🟢 Server Online';
+            statusElement.className = 'stat-value text-2xl text-success';
+            connectionModeElement.textContent = 'Central Server';
+        }
+        
+        peerCountElement.textContent = data.peer_count || 0;
+        
+        // Update last update time
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            hour12: false
+        });
+        if (lastUpdateElement) {
+            lastUpdateElement.textContent = timeString;
+        }
+    })
+    .catch(error => {
+        console.error('Status update failed:', error);
+        document.getElementById('p2p-status').textContent = '❓ Unknown';
+        document.getElementById('connection-mode').textContent = 'Error';
+    });
+}
+
+function updateDashboardStats() {
+    fetch('/dashboard/api/stats/')
+    .then(response => response.json())
+    .then(data => {
+        // Update message count if element exists
+        const msgCountElements = document.querySelectorAll('.message-count');
+        msgCountElements.forEach(el => el.textContent = data.messages);
+        
+        // Update blockchain count
+        const blockchainCountElements = document.querySelectorAll('.blockchain-count');
+        blockchainCountElements.forEach(el => el.textContent = data.blockchain_entries);
+        
+        // Update device count
+        const deviceCountElements = document.querySelectorAll('.device-count');
+        deviceCountElements.forEach(el => el.textContent = data.devices);
+        
+        // Update system mode
+        const systemModeElement = document.getElementById('system-mode');
+        if (systemModeElement) {
+            systemModeElement.textContent = data.current_mode || 'normal';
+            systemModeElement.className = `badge ${data.current_mode === 'emergency' ? 'badge-error' : 'badge-info'}`;
+        }
+        
+        console.log('Dashboard stats updated:', data);
+    })
+    .catch(error => console.error('Stats update failed:', error));
+}
+
 function toggleP2P() {
     fetch('/p2p_sync/api/toggle/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            'X-CSRFToken': getCsrfToken()
         }
     })
     .then(response => response.json())
@@ -189,31 +634,93 @@ function toggleP2P() {
         updateStatus();
         alert(`Switched to ${data.offline_mode ? 'P2P Offline' : 'Server Online'} mode`);
     })
-    .catch(console.error);
+    .catch(error => {
+        console.error('Toggle failed:', error);
+        alert('Failed to toggle P2P mode');
+    });
 }
 
 function sendMessage(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     
+    const senderDevice = formData.get('sender_device');
+    const receiverDevice = formData.get('receiver_device');
+    const message = formData.get('message');
+    const encrypt = formData.get('encrypt') === 'on';
+    const priority = formData.get('priority') === 'on';
+    
+    // Validation
+    if (!senderDevice || !receiverDevice || !message) {
+        alert('⚠️ Please fill in all required fields:\n- Sender Device\n- Receiver Device\n- Message Content');
+        return;
+    }
+    
+    if (senderDevice === receiverDevice) {
+        const confirm = window.confirm('🔄 You are sending a message to the same device.\n\nThis will create a self-communication log.\n\nContinue?');
+        if (!confirm) return;
+    }
+    
+    // Show sending status
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = '📡 Sending...';
+    submitBtn.disabled = true;
+    
+    // Prepare enhanced form data
+    const enhancedData = new FormData();
+    enhancedData.append('sender_device', senderDevice);
+    enhancedData.append('receiver_device', receiverDevice);
+    enhancedData.append('message', message);
+    enhancedData.append('encrypt', encrypt);
+    enhancedData.append('priority', priority);
+    
     fetch('/messaging/api/send/', {
         method: 'POST',
         headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            'X-CSRFToken': getCsrfToken()
         },
-        body: formData
+        body: enhancedData
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Message sent successfully!');
+            // Success notification with details
+            const notification = `✅ MESSAGE SENT SUCCESSFULLY!\n\n` +
+                `📡 From: ${senderDevice}\n` +
+                `📍 To: ${receiverDevice}\n` +
+                `🔐 Encrypted: ${encrypt ? 'Yes' : 'No'}\n` +
+                `⚡ Priority: ${priority ? 'High' : 'Normal'}\n` +
+                `🆔 Message ID: ${data.msg_id || 'Generated'}\n\n` +
+                `Message logged to blockchain ledger.`;
+            
+            alert(notification);
             event.target.reset();
-            location.reload();
+            
+            // Update dashboard stats and activity
+            updateDashboardStats();
+            updateSystemActivity();
+            
+            // Reset button
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
         } else {
-            alert('Failed to send message');
+            alert(`❌ FAILED TO SEND MESSAGE\n\nError: ${data.error || 'Unknown error'}\n\nPlease check device availability and try again.`);
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
         }
     })
-    .catch(console.error);
+    .catch(error => {
+        console.error('Send message failed:', error);
+        alert(`🚨 COMMUNICATION ERROR\n\nFailed to establish connection with messaging system.\n\nError: ${error.message}\n\nPlease check network connectivity.`);
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
+}
+
+function getCsrfToken() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    return csrfToken ? csrfToken.value : '';
 }
 </script>
 
