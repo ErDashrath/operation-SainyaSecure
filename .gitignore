@@ -1,0 +1,81 @@
+# Python/Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+*.pyo
+*.pyd
+*.env
+.env.*
+*.log
+*.pot
+*.pyc
+*.migrations/
+
+# VSCode
+.vscode/
+
+# Node/React/Next.js
+node_modules/
+.next/
+yarn-error.log
+npm-debug.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Contracts/build
+contracts/build/
+
+# Other
+*.bak
+*.swp
+*.tmp
+
+# Secrets
+secrets.json
+*.pem
+*.key
+*.crt
+
+# Ignore test output
+*.coverage
+htmlcov/
+
+# Ignore notebooks
+*.ipynb_checkpoints
+
+# Ignore local storage
+local_storage/
+
+# Ignore static/media
+staticfiles/
+media/
+
+# Ignore environment files
+.envrc
+.env.local
+.env.development
+.env.production
+
+# Ignore backup files
+*.orig
+*.backup
+
+# Ignore IDE files
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Ignore deployment files
+*.tar.gz
+*.zip
+
+# Ignore unnecessary files
+quick_demo.py
+show_demo_data.py
+simple_test.py
+test_*.py
+rename_project.bat
+rename_project.ps1

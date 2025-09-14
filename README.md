@@ -123,20 +123,31 @@ operation-SainyaSecure/
 ├── military_comm/          # Main Django project
 ├── users/                  # User and device management
 ├── messaging/              # Message handling
-├── p2p_sync/              # P2P communication
-├── blockchain/            # Blockchain integration
-├── ai_anomaly/           # AI monitoring
-├── dashboard/            # Command center
-├── templates/            # HTML templates
-└── static/              # Static assets
+├── p2p_sync/               # P2P communication
+├── blockchain/             # Blockchain integration
+├── ai_anomaly/             # AI monitoring
+├── dashboard/              # Command center
+├── templates/              # HTML templates
+└── static/                 # Static assets
 ```
 
-### Contributing
+### Contributing & Push Standards
 1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Ensure the following before pushing:
+	- All environment files and secrets are in `.gitignore`
+	- No unnecessary files (logs, test outputs, IDE configs, demo scripts) are staged
+	- Code follows PEP8 and Django/React best practices
+	- All tests pass (`python manage.py test`)
+	- `requirements.txt` is updated for new dependencies
+	- Documentation is updated for new features/APIs
+	- No hardcoded secrets or credentials
+	- Sensitive data is encrypted at rest and in transit
+	- Migrations are included for model changes
+	- Demo/test scripts are not pushed to production branches
+4. Commit changes (`git commit -m 'Add amazing feature'`)
+5. Push to branch (`git push origin feature/amazing-feature`)
+6. Open Pull Request
 
 ## 📈 Performance
 
